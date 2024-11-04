@@ -1,5 +1,7 @@
+// Lennon tietokontaineri
 const FLIGHT_INFO_CONTAINER = document.querySelector(".flight-info");
 
+// Lentokoneen kuvan liike-animaatio
 function moveImage() {
     const image = document.getElementById("bottomLeftImage");
     const audio = document.getElementById("airplaneSound");
@@ -9,6 +11,7 @@ function moveImage() {
     const speedX = 8.4;
     const speedY = 4;
 
+    // Näytä kuva ja toista ääni
     image.style.opacity = "1";
     audio.play();
 
@@ -18,16 +21,19 @@ function moveImage() {
         image.style.left = posX + "px";
         image.style.bottom = posY + "px";
 
+        // Tarkista, onko kuva ylärajoissa
         if (posX >= window.innerWidth * 0.9 && posY >= window.innerHeight * 0.9) {
             image.style.transition = "opacity 3s ease";
             image.style.opacity = "0";
 
+            // Keskeytä ääni, kun kuva haalistuu
             setTimeout(() => {
                 audio.pause();
                 audio.currentTime = 0;
             }, 1600);
         }
 
+        // Keskeytä animaatio, kun kuva ylittää näytön rajat
         if (posX >= window.innerWidth && posY >= window.innerHeight) {
             clearInterval(moveInterval);
             setTimeout(() => {
@@ -37,21 +43,24 @@ function moveImage() {
     }, interval);
 }
 
+// Tapahtuma, kun sivu latautuu
 window.onload = function() {
     moveImage();
 
+    // Tyhjennä hakukenttien arvot latauksessa
     document.getElementById("flightNumberInput").value = "";
     document.getElementById("flightRegInput").value = "";
     document.getElementById("flightCallSignInput").value = "";
     document.getElementById("flightIcao24Input").value = "";
 
-    // Set "Number" radio button as checked by default and show its field
+    // Aseta "Number" radio-painikkeeksi oletuksena ja näytä sen kenttä
     document.getElementById("number").checked = true;
     toggleField(document.getElementById("number"), 'numberField');
 };
 
+// Hakee lennon tiedot API:sta
 function searchFlight() {
-    FLIGHT_INFO_CONTAINER.innerHTML = "";
+    FLIGHT_INFO_CONTAINER.innerHTML = ""; // Tyhjennä edelliset tulokset
     const flightNumber = document.getElementById("flightNumberInput").value.trim();
     const flightReg = document.getElementById("flightRegInput").value.trim();
     const flightCallSign = document.getElementById("flightCallSignInput").value.trim();
@@ -59,6 +68,7 @@ function searchFlight() {
 
     let apiUrl = "";
 
+    // Määritä oikea hakutyyppi ja rakenna API-URL
     if (document.getElementById("number").checked && flightNumber) {
         apiUrl = `https://aerodatabox.p.rapidapi.com/flights/Number/${flightNumber}?withAircraftImage=true&withLocation=true`;
         console.log("Searching by Number:", flightNumber);
@@ -76,6 +86,7 @@ function searchFlight() {
         return;
     }
 
+    // Hae tiedot API:sta
     fetch(apiUrl, {
         method: "GET",
         headers: {
@@ -104,18 +115,20 @@ function searchFlight() {
     });
 }
 
+// Näyttää haetut lennon tiedot
 function displayFlightData(flightDataArray) {
 
     console.log("Flight data (raw JSON):", JSON.stringify(flightDataArray, null, 2));
 
-    FLIGHT_INFO_CONTAINER.innerHTML = `
-        <div class="row justify-content-center mb-4">
+    // Alustaa lennon tietokontainerin HTML:n
+    FLIGHT_INFO_CONTAINER.innerHTML = 
+        `<div class="row justify-content-center mb-4">
             <div class="col-12 col-md-8 col-lg-6">
                 <h2 style="text-align: center">Flight Information:</h2>
             </div>
-        </div>
-    `;
+        </div>`;
 
+    // Muuntaa tiedot taulukoksi, jos ne eivät jo ole
     const dataArray = Array.isArray(flightDataArray) ? flightDataArray : [flightDataArray];
 
     dataArray.forEach((flightData, index) => {
@@ -139,8 +152,9 @@ function displayFlightData(flightDataArray) {
 
         const locationPlaceholderId = `location-placeholder-${index}`;
 
-        FLIGHT_INFO_CONTAINER.innerHTML += `
-        <div class="row justify-content-center mb-4">
+        // Lisää lennon tiedot HTML-muotoon taulukossa
+        FLIGHT_INFO_CONTAINER.innerHTML += 
+        `<div class="row justify-content-center mb-4">
             <div class="col-12 col-md-8 col-lg-6">
                 <table class="table table-bordered table-striped">
                     <tbody>
@@ -161,10 +175,9 @@ function displayFlightData(flightDataArray) {
                     </tbody>
                 </table>
             </div> 
-        </div>
-        `;
+        </div>`;
 
-        // Fetch and display location only if latitude and longitude are available
+        // Hakee ja näyttää sijainnin, jos leveys- ja pituusasteet ovat saatavilla
         if (!isNaN(lat) && !isNaN(lon)) {
             getPlaceFromCoordinates(lat, lon, locationPlaceholderId);
         } else {
@@ -175,6 +188,7 @@ function displayFlightData(flightDataArray) {
     FLIGHT_INFO_CONTAINER.style.color = 'yellow';
 }
 
+// Hakee sijainnin leveys- ja pituusasteilla
 function getPlaceFromCoordinates(lat, lon, locationPlaceholderId) {
     const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyBHd6QXPEb55mCzIx9FjucTLiXM8_ZqXxE`;
 
@@ -194,12 +208,12 @@ function getPlaceFromCoordinates(lat, lon, locationPlaceholderId) {
         }
     })
     .catch(error => {
-        console.error("Error with geocoding request:", error);
         const locationElement = document.getElementById(locationPlaceholderId);
         locationElement.textContent = "Location not available";
     });
 }
 
+// Näyttää ja piilottaa hakukenttiä valitun radio-painikkeen mukaan
 function toggleField(radio, fieldId) {
     document.getElementById("flightNumberInput").value = "";
     document.getElementById("flightRegInput").value = "";

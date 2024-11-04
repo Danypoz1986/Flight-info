@@ -8,6 +8,7 @@
     <title>Flight Info</title>
 </head>
 <body>
+    <!-- Ylätunniste, joka sisältää otsikon -->
     <div class="container-fluid py-4" id="header">
         <div class="row">
             <div class="col text-center">
@@ -17,7 +18,7 @@
     </div>    
 
     <div class="container" id="searchContainer">
-        <!-- Table with 4 search forms -->
+        <!-- Taulukko, jossa on 4 hakulomaketta -->
         <div class="field-container">
             <div class="input-group field" id="numberField">
                 <input type="text" class="form-control" placeholder="Enter flight number" aria-label="flight number" id="flightNumberInput">
@@ -37,7 +38,7 @@
             </div>
         </div>
         <h3 style="text-align: center;">Search by:</h3>
-        <!-- Checkboxes centered below search field -->
+        <!-- Keskitetyt valintaruudut hakukentän alapuolella -->
         <div class="checkbox-group">
             <div>
                 <input type="radio" name="searchType" id="number" onclick="toggleField(this, 'numberField')">
@@ -58,12 +59,14 @@
         </div>
     </div> 
 
+    <!-- Lennon tietojen kontaineri -->
     <div class="container-fluid py-4 flight-info"></div>
 
-    
+    <!-- Lentokoneen kuva ja ääni -->
     <img src="file.png" alt="Airplane" id="bottomLeftImage">
     <audio id="airplaneSound" src="airplaneSound.mp3" autoplay></audio>
 
+    <!-- Alatunniste, joka sisältää logon -->
     <div class="container-fluid py-4" id="footer">
         <div class="row">
             <div class="col text-center">
